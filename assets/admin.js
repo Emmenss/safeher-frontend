@@ -113,7 +113,7 @@ function buildDemoData() {
       _ts: ts.getTime()
     });
   }
-  return rows.reverse(); // plus récentes en premier
+  return rows; // plus récentes en premier
 }
 
 const $ = (s) => document.querySelector(s);
