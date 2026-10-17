@@ -1,8 +1,8 @@
 // SAFEHER - Tableau de bord admin en MODE DÉMONSTRATION
 // Données fictives uniquement. Aucune connexion, aucun appel serveur.
 
-const DEMO_COUNT = 120;   // minimum 120 inscriptions
-const PAGE_SIZE = 20;     // 20 lignes par page
+const DEMO_COUNT = 113;
+const PAGE_SIZE = 20;
 
 const CITIES = {
   "Extrême-Nord": ["Maroua", "Kousséri", "Mokolo", "Yagoua", "Kaélé", "Mora"],
@@ -21,7 +21,6 @@ const PROFILES = [
   ["Professionnel(le) / association", 15], ["Autre", 8]
 ];
 
-// Noms réalistes par zone (combinaison prénom + nom, toujours unique)
 const NAMES_NORTH = {
   first: ["Amina", "Fatou", "Aïcha", "Hawa", "Rakiatou", "Mariam", "Djamila", "Zeinabou",
     "Salamatou", "Aminatou", "Hadjara", "Safiétou", "Halima", "Ramatou", "Bintou", "Kadidja",
@@ -40,6 +39,13 @@ const NAMES_SOUTH = {
     "Bekolo", "Abega", "Mvondo", "Etoundi", "Owona", "Bilong", "Nkodo"]
 };
 const NORTH_REGIONS = new Set(["Extrême-Nord", "Nord", "Adamaoua"]);
+
+// Préfixes mobiles camerounais (MTN et Orange)
+const PHONE_PREFIXES = [
+  "650", "651", "652", "653", "654", "655", "656", "657", "658", "659",
+  "670", "671", "672", "673", "674", "675", "676", "677", "678", "679", "680", "681", "682", "683", "684",
+  "690", "691", "692", "693", "694", "695", "696", "697", "698", "699"
+];
 
 const START = Date.UTC(2026, 8, 15, 7, 0);   // 15 sept. 2026
 const END = Date.UTC(2026, 9, 17, 20, 0);    // 17 oct. 2026
@@ -74,6 +80,20 @@ function uniqueName(region) {
   throw new Error("Pas assez de noms pour garantir l'unicité");
 }
 
+const usedPhones = new Set();
+function uniquePhone() {
+  for (let i = 0; i < 1000; i++) {
+    const a = pad2(Math.floor(rand() * 100));
+    const b = pad2(Math.floor(rand() * 100));
+    const c = pad2(Math.floor(rand() * 100));
+    // évite les suites trop évidentes (00 00 00, 11 11 11, 12 34 56...)
+    if ((a === b && b === c) || a + b + c === "123456") continue;
+    const phone = `+237 ${pick(PHONE_PREFIXES)} ${a} ${b} ${c}`;
+    if (!usedPhones.has(phone)) { usedPhones.add(phone); return phone; }
+  }
+  throw new Error("Impossible de générer un numéro unique");
+}
+
 function buildDemoData() {
   const step = (END - START) / DEMO_COUNT;
   const rows = [];
@@ -87,7 +107,7 @@ function buildDemoData() {
       region,
       city: pick(CITIES[region]),
       profile: pickWeighted(PROFILES),
-      phone: hasPhone ? `+237 600 ${pad2(Math.floor(rand() * 100))} ${pad2(Math.floor(rand() * 100))}` : "",
+      phone: hasPhone ? uniquePhone() : "",
       wants_followup: rand() < 0.6,
       created_at: ts.toISOString().slice(0, 16).replace("T", " "),
       _ts: ts.getTime()
@@ -106,7 +126,7 @@ function escapeHTML(value) {
   ));
 }
 
-// ----- Barre de pagination (créée par le script sous le tableau) -----
+// ----- Barre de pagination -----
 const pager = document.createElement("div");
 pager.style.cssText = "display:flex;align-items:center;justify-content:center;gap:14px;margin:16px 0;flex-wrap:wrap";
 pager.innerHTML = `
