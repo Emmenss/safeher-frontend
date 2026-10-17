@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Administration · SAFEHER</title><link rel="stylesheet" href="/assets/style.css"></head>
+<body><header class="top"><a class="brand" href="/"><span class="logo">S</span> SAFEHER</a><nav><a href="/">Voir le site</a><a href="/confidentialite">Confidentialité</a></nav></header>
+<main class="admin-wrap">
+<section class="page-hero"><span class="eyebrow">ESPACE PRIVÉ</span><h1>Administration SAFEHER</h1><p>Accès réservé aux personnes autorisées. Les informations affichées ici sont personnelles et ne doivent pas être partagées sans autorisation.</p></section>
+<div id="notice" class="alert hidden" role="status"></div>
+<section id="login-panel" class="admin-card admin-form"><h2>Connexion administrateur</h2><p class="small-note">Les identifiants sont configurés sur le serveur, jamais dans les fichiers publics.</p>
+<form id="login-form"><label>Nom d’utilisateur<input name="username" autocomplete="username" required></label><label>Mot de passe<input name="password" type="password" autocomplete="current-password" required></label><button type="submit" id="login-button">Se connecter</button></form></section>
+<section id="dashboard" class="hidden">
+<div class="admin-header"><div><h2>Vue d’ensemble</h2><p class="small-note">Données réelles reçues par le backend SAFEHER.</p></div><div class="admin-actions"><button id="refresh" class="secondary" type="button">Actualiser</button><button id="export" type="button">Exporter CSV</button><button id="logout" class="secondary" type="button">Déconnexion</button></div></div>
+<div class="admin-stats"><div class="metric"><span>Total des inscriptions</span><strong id="metric-total">0</strong></div><div class="metric"><span>Souhaitent être recontacté·es</span><strong id="metric-followup">0</strong></div><div class="metric"><span>Numéros renseignés</span><strong id="metric-phone">0</strong></div></div>
+<div class="admin-card"><label>Rechercher par nom, région, ville ou profil<input id="search" type="search" placeholder="Saisir un terme…"></label><p class="small-note">Les coordonnées téléphoniques ne sont visibles que dans cet espace privé. Limitez leur consultation aux personnes autorisées.</p></div>
+<div class="table-wrap"><table><thead><tr><th>ID</th><th>Prénom / pseudonyme</th><th>Région</th><th>Ville</th><th>Profil</th><th>Téléphone</th><th>Recontact</th><th>Date</th></tr></thead><tbody id="registrations"><tr><td colspan="8" class="empty">Chargement…</td></tr></tbody></table></div>
+<p id="result-count" class="small-note"></p>
+</section>
+</main><footer class="admin-wrap">SAFEHER · Accès administrateur protégé · <a href="/">Retour au site</a></footer>
+<script src="/assets/admin.js"></script></body></html>
