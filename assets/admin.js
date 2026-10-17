@@ -1,5 +1,6 @@
 // Remplacer par l’URL réelle du backend PythonAnywhere avant le déploiement final.
-const API_BASE = "https://TON-NOM.pythonanywhere.com";
+const API_BASE = "https://judeems.pythonanywhere.com";
+
 const $ = (s) => document.querySelector(s);
 const notice = $("#notice");
 const loginPanel = $("#login-panel");

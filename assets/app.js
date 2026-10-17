@@ -1,5 +1,5 @@
 // Remplace cette URL par l'adresse de ton API PythonAnywhere après déploiement.
-const API_BASE = "https://TON-NOM.pythonanywhere.com";
+const API_BASE = "https://judeems.pythonanywhere.com";
 const form = document.querySelector("#signup-form");
 const message = document.querySelector("#message");
 const submitBtn = document.querySelector("#submit-btn");
