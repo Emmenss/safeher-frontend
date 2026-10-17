@@ -1,35 +1,45 @@
 // SAFEHER - Tableau de bord admin en MODE DÉMONSTRATION
 // Données fictives uniquement. Aucune connexion, aucun appel serveur.
 
-const DEMO_COUNT = 120;
+const DEMO_COUNT = 120;   // minimum 120 inscriptions
+const PAGE_SIZE = 20;     // 20 lignes par page
 
 const CITIES = {
-  "Adamaoua": ["Ngaoundéré", "Meiganga", "Tibati"],
-  "Centre": ["Yaoundé", "Mbalmayo", "Obala", "Bafia"],
-  "Est": ["Bertoua", "Batouri", "Abong-Mbang"],
-  "Extrême-Nord": ["Maroua", "Kousséri", "Mokolo", "Yagoua"],
-  "Littoral": ["Douala", "Nkongsamba", "Édéa", "Loum"],
-  "Nord": ["Garoua", "Guider", "Poli"],
-  "Nord-Ouest": ["Bamenda", "Kumbo", "Wum"],
-  "Ouest": ["Bafoussam", "Dschang", "Foumban", "Mbouda"],
-  "Sud": ["Ebolowa", "Kribi", "Sangmélima"],
-  "Sud-Ouest": ["Buea", "Limbe", "Kumba", "Mamfe"]
+  "Extrême-Nord": ["Maroua", "Kousséri", "Mokolo", "Yagoua", "Kaélé", "Mora"],
+  "Nord": ["Garoua", "Guider", "Poli", "Figuil", "Tcholliré"],
+  "Adamaoua": ["Ngaoundéré", "Meiganga", "Tibati", "Banyo"],
+  "Littoral": ["Douala", "Nkongsamba", "Édéa"],
+  "Centre": ["Yaoundé", "Mbalmayo", "Obala"],
+  "Est": ["Bertoua", "Batouri", "Abong-Mbang"]
 };
 const REGION_WEIGHTS = [
-  ["Littoral", 20], ["Centre", 20], ["Extrême-Nord", 14], ["Ouest", 12], ["Nord-Ouest", 9],
-  ["Sud-Ouest", 9], ["Nord", 6], ["Adamaoua", 4], ["Est", 3], ["Sud", 3]
+  ["Extrême-Nord", 36], ["Nord", 26], ["Adamaoua", 16],
+  ["Littoral", 10], ["Centre", 8], ["Est", 4]
 ];
 const PROFILES = [
   ["Personne intéressée", 55], ["Témoin / proche", 22],
   ["Professionnel(le) / association", 15], ["Autre", 8]
 ];
-const NAMES = ["Amina", "Grace", "Fatou", "Marie", "Nadège", "Aïcha", "Estelle", "Clarisse", "Joëlle",
-  "Brigitte", "Chantal", "Sandrine", "Laure", "Prisca", "Mireille", "Hawa", "Rakiatou", "Solange",
-  "Carine", "Ghislaine", "Danielle", "Flore", "Yvette", "Armelle", "Nicole", "Rose", "Pélagie",
-  "Esther", "Judith", "Larissa", "Ornella", "Syntiche", "Bernadette", "Mariam", "Viviane",
-  "Alice", "Christelle", "Honorine", "Diane", "Ruth"];
-const PSEUDOS = ["Pseudo_K", "Anonyme_237", "Lumière", "Étoile", "Colibri", "Papillon", "Soleil_D",
-  "Amie_X", "Discrète", "Espoir"];
+
+// Noms réalistes par zone (combinaison prénom + nom, toujours unique)
+const NAMES_NORTH = {
+  first: ["Amina", "Fatou", "Aïcha", "Hawa", "Rakiatou", "Mariam", "Djamila", "Zeinabou",
+    "Salamatou", "Aminatou", "Hadjara", "Safiétou", "Halima", "Ramatou", "Bintou", "Kadidja",
+    "Hadidja", "Mairamou", "Asta", "Hamsatou", "Fadimatou", "Naïmatou", "Rabi", "Pauline",
+    "Esther", "Léa", "Sarah", "Lydie", "Djénéba", "Zouleiha"],
+  last: ["Abba", "Adamou", "Aliou", "Bouba", "Djibril", "Hamidou", "Ibrahim", "Malloum",
+    "Mohamadou", "Saidou", "Souleymanou", "Oumarou", "Bello", "Issa", "Moussa", "Yaya",
+    "Mbaïdjol", "Zra", "Dakolé", "Mazra", "Gonondo", "Kaldapa", "Wadjiri", "Hamadjoda"]
+};
+const NAMES_SOUTH = {
+  first: ["Grace", "Marie", "Nadège", "Estelle", "Clarisse", "Joëlle", "Brigitte", "Chantal",
+    "Sandrine", "Laure", "Prisca", "Mireille", "Solange", "Carine", "Ruth", "Christelle",
+    "Honorine", "Diane", "Larissa", "Viviane", "Pélagie", "Ornella", "Flore", "Yvette"],
+  last: ["Mballa", "Ngono", "Atangana", "Essomba", "Mbarga", "Nkoulou", "Ekobo", "Nguemo",
+    "Fotso", "Kamga", "Biyong", "Onana", "Ewane", "Mbonjo", "Eboa", "Manga", "Ndongo",
+    "Bekolo", "Abega", "Mvondo", "Etoundi", "Owona", "Bilong", "Nkodo"]
+};
+const NORTH_REGIONS = new Set(["Extrême-Nord", "Nord", "Adamaoua"]);
 
 const START = Date.UTC(2026, 8, 15, 7, 0);   // 15 sept. 2026
 const END = Date.UTC(2026, 9, 17, 20, 0);    // 17 oct. 2026
@@ -54,17 +64,26 @@ function pickWeighted(list) {
 function pick(list) { return list[Math.floor(rand() * list.length)]; }
 const pad2 = (n) => String(n).padStart(2, "0");
 
+const usedNames = new Set();
+function uniqueName(region) {
+  const pool = NORTH_REGIONS.has(region) ? NAMES_NORTH : NAMES_SOUTH;
+  for (let i = 0; i < 1000; i++) {
+    const name = `${pick(pool.first)} ${pick(pool.last)}`;
+    if (!usedNames.has(name)) { usedNames.add(name); return name; }
+  }
+  throw new Error("Pas assez de noms pour garantir l'unicité");
+}
+
 function buildDemoData() {
   const step = (END - START) / DEMO_COUNT;
   const rows = [];
   for (let i = 0; i < DEMO_COUNT; i++) {
     const region = pickWeighted(REGION_WEIGHTS);
-    const name = rand() < 0.12 ? pick(PSEUDOS) : pick(NAMES);
     const hasPhone = rand() < 0.55;
     const ts = new Date(START + i * step + Math.floor(rand() * step * 0.8));
     rows.push({
       id: i + 1,
-      first_name: name,
+      first_name: uniqueName(region),
       region,
       city: pick(CITIES[region]),
       profile: pickWeighted(PROFILES),
@@ -74,11 +93,12 @@ function buildDemoData() {
       _ts: ts.getTime()
     });
   }
-  return rows.reverse();
+  return rows.reverse(); // plus récentes en premier
 }
 
 const $ = (s) => document.querySelector(s);
 const registrations = buildDemoData();
+let currentPage = 1;
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => (
@@ -86,18 +106,48 @@ function escapeHTML(value) {
   ));
 }
 
-function drawRows() {
+// ----- Barre de pagination (créée par le script sous le tableau) -----
+const pager = document.createElement("div");
+pager.style.cssText = "display:flex;align-items:center;justify-content:center;gap:14px;margin:16px 0;flex-wrap:wrap";
+pager.innerHTML = `
+  <button id="prev-page" class="secondary" type="button" style="width:auto;margin:0">← Précédent</button>
+  <span id="page-info" class="small-note" style="margin:0"></span>
+  <button id="next-page" type="button" style="width:auto;margin:0">Suivant →</button>`;
+document.querySelector(".table-wrap").insertAdjacentElement("afterend", pager);
+
+function filteredRows() {
   const q = $("#search").value.trim().toLocaleLowerCase("fr");
-  const rows = registrations.filter(r =>
+  return registrations.filter(r =>
     [r.first_name, r.region, r.city, r.profile, r.phone].join(" ").toLocaleLowerCase("fr").includes(q)
   );
-  $("#registrations").innerHTML = rows.length
-    ? rows.map(r => `<tr>
+}
+
+function drawRows() {
+  const rows = filteredRows();
+  const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  if (currentPage > pages) currentPage = pages;
+  const startIdx = (currentPage - 1) * PAGE_SIZE;
+  const pageRows = rows.slice(startIdx, startIdx + PAGE_SIZE);
+
+  $("#registrations").innerHTML = pageRows.length
+    ? pageRows.map(r => `<tr>
         <td>${escapeHTML(r.id)}</td><td>${escapeHTML(r.first_name)}</td><td>${escapeHTML(r.region)}</td>
         <td>${escapeHTML(r.city)}</td><td>${escapeHTML(r.profile)}</td><td>${escapeHTML(r.phone || "—")}</td>
         <td>${r.wants_followup ? "Oui" : "Non"}</td><td>${escapeHTML(r.created_at)}</td></tr>`).join("")
     : '<tr><td colspan="8" class="empty">Aucune inscription ne correspond à cette recherche.</td></tr>';
-  $("#result-count").textContent = `${rows.length} résultat(s) affiché(s) sur ${registrations.length} inscription(s).`;
+
+  const from = rows.length ? startIdx + 1 : 0;
+  const to = startIdx + pageRows.length;
+  $("#result-count").textContent = `Affichage de ${from} à ${to} sur ${rows.length} résultat(s) (${registrations.length} inscriptions au total).`;
+  $("#page-info").textContent = `Page ${currentPage} / ${pages}`;
+  $("#prev-page").disabled = currentPage <= 1;
+  $("#next-page").disabled = currentPage >= pages;
+}
+
+function goTo(page) {
+  currentPage = page;
+  drawRows();
+  document.querySelector(".table-wrap").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function updateMetrics() {
@@ -106,7 +156,6 @@ function updateMetrics() {
   $("#metric-phone").textContent = registrations.filter(r => r.phone).length;
 }
 
-// ----- Graphiques en barres (CSS pur, sans bibliothèque) -----
 function countBy(keyFn) {
   const map = new Map();
   registrations.forEach(r => { const k = keyFn(r); map.set(k, (map.get(k) || 0) + 1); });
@@ -140,7 +189,6 @@ function renderCharts() {
   renderBars("#chart-week", buckets);
 }
 
-// ----- Export CSV -----
 function csvCell(value) {
   let text = value == null ? "" : String(value);
   if (/^[=+\-@\t\r]/.test(text)) text = "'" + text;
@@ -148,7 +196,7 @@ function csvCell(value) {
 }
 
 function exportCSV() {
-  const header = ["id", "prenom_pseudonyme", "region", "ville", "profil", "telephone", "recontact", "date"];
+  const header = ["id", "nom", "region", "ville", "profil", "telephone", "recontact", "date"];
   const lines = [header.join(",")].concat(registrations.map(r => [
     r.id, r.first_name, r.region, r.city, r.profile, r.phone,
     r.wants_followup ? "oui" : "non", r.created_at
@@ -171,7 +219,9 @@ updateMetrics();
 renderCharts();
 drawRows();
 
-$("#search").addEventListener("input", drawRows);
+$("#search").addEventListener("input", () => { currentPage = 1; drawRows(); });
+$("#prev-page").addEventListener("click", () => goTo(currentPage - 1));
+$("#next-page").addEventListener("click", () => goTo(currentPage + 1));
 $("#refresh").addEventListener("click", () => {
   drawRows();
   notice.textContent = "Données actualisées (démonstration).";
