@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAFEHER — Inscription</title><link rel="stylesheet" href="/assets/style.css"></head>
+<body>
+<header class="top"><a class="brand" href="/"><span class="logo">S</span> SAFEHER</a><nav><a href="#fonctionnement">Notre démarche</a><a href="#inscription">Inscription</a></nav></header>
+<main><section class="hero"><div class="hero-copy"><span class="eyebrow">ÉCOUTER · ORIENTER · PROTÉGER</span>
+<h1>Vous n’avez pas à chercher de l’aide seul·e.</h1>
+<p>Inscrivez-vous pour manifester votre intérêt pour SAFEHER, une plateforme qui vise à faciliter l’accès à l’information et aux structures d’accompagnement face aux violences basées sur le genre.</p>
+<div class="note"><strong>Important :</strong> ce site recueille uniquement des inscriptions d’intérêt. Ce n’est pas un service d’urgence et il ne permet pas de faire un signalement.</div></div>
+<div class="form-card" id="inscription"><h2>Manifester mon intérêt</h2><p class="sub">Les champs marqués * sont obligatoires.</p><div id="message" class="alert hidden" role="status"></div>
+<form id="signup-form">
+<label>Prénom ou pseudonyme *<input name="first_name" maxlength="70" required placeholder="Ex. Amina ou un pseudonyme"></label>
+<div class="two"><label>Région *<select name="region" required><option value="">Choisir</option><option>Adamaoua</option><option>Centre</option><option>Est</option><option>Extrême-Nord</option><option>Littoral</option><option>Nord</option><option>Nord-Ouest</option><option>Ouest</option><option>Sud</option><option>Sud-Ouest</option></select></label>
+<label>Ville / localité *<input name="city" maxlength="90" required placeholder="Ex. Maroua"></label></div>
+<label>Vous êtes… *<select name="profile" required><option value="">Choisir une réponse</option><option>Personne intéressée</option><option>Témoin / proche</option><option>Professionnel(le) / association</option><option>Autre</option></select></label>
+<label>Téléphone (facultatif)<input name="phone" inputmode="tel" maxlength="30" placeholder="+237 …"></label>
+<p class="privacy">Le téléphone est facultatif. N’indiquez pas de récit de violence ni d’informations sur une autre personne.</p>
+<label class="check"><input type="checkbox" name="wants_followup" value="yes"><span>Je souhaite être recontacté·e lorsque le projet proposera un test.</span></label>
+<label class="check"><input type="checkbox" name="consent" value="yes" required><span>J’accepte que mes informations soient utilisées pour le suivi de cette inscription au projet SAFEHER. *</span></label>
+<div class="hp" aria-hidden="true"><label>Ne pas remplir<input name="website" tabindex="-1" autocomplete="off"></label></div>
+<button id="submit-btn" type="submit">Envoyer mon inscription <span>→</span></button>
+<p class="fine">En envoyant ce formulaire, vous manifestez votre intérêt pour le projet. Cela ne garantit pas encore l’accès à un service d’accompagnement.</p></form></div></section>
+<section id="fonctionnement" class="features"><div><span class="num">01</span><h3>Respect de la vie privée</h3><p>Un pseudonyme suffit et le téléphone reste facultatif.</p></div><div><span class="num">02</span><h3>Une plateforme en construction</h3><p>Les inscriptions aident à mesurer l’intérêt pour SAFEHER et à préparer un pilote.</p></div><div><span class="num">03</span><h3>Orientation vers l’aide</h3><p>Le projet vise à rendre les informations sur les structures d’accompagnement plus faciles à trouver.</p></div></section>
+<section class="stats" aria-live="polite"><div><span class="eyebrow">LA COMMUNAUTÉ</span><h2>Les inscriptions reçues</h2><p>Compteur actualisé depuis le serveur SAFEHER.</p></div><div class="count"><strong id="total">—</strong><span>inscriptions enregistrées</span></div></section>
+<footer>SAFEHER · Prototype d’inscription · <span id="footer-status">Connexion au serveur…</span></footer></main>
+<script src="/assets/app.js"></script></body></html>
